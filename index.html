@@ -434,6 +434,90 @@
     font-family:'IBM Plex Mono',monospace;
   }
 
+  /* ---------- VOICE WIDGET (inline) ---------- */
+  .voice-widget{
+    background:var(--bg-void);
+    border-top:1px solid var(--border-subtle);
+    border-bottom:1px solid var(--border-subtle);
+  }
+  .voice-card{
+    max-width:640px;
+    margin:0 auto;
+    background:var(--bg-panel);
+    border:1px solid var(--border-subtle);
+    border-radius:var(--radius-lg);
+    padding:44px 32px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+  }
+  .voice-orb{
+    width:84px;height:84px;
+    border-radius:50%;
+    border:none;
+    cursor:pointer;
+    background:linear-gradient(135deg, var(--accent-teal), var(--accent-green));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 0 0 rgba(75,184,173,0.4);
+    transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+    flex-shrink:0;
+  }
+  .voice-orb svg{width:30px;height:30px;stroke:#08120e;}
+  .voice-orb:hover{transform:translateY(-2px);}
+  .voice-orb:disabled{opacity:.6;cursor:wait;}
+  .voice-orb-active{animation:voice-pulse 1.8s ease-out infinite;}
+  .voice-orb-speaking{animation:voice-pulse-fast .9s ease-out infinite;}
+  @keyframes voice-pulse{
+    0%{box-shadow:0 0 0 0 rgba(75,184,173,0.45);}
+    70%{box-shadow:0 0 0 18px rgba(75,184,173,0);}
+    100%{box-shadow:0 0 0 0 rgba(75,184,173,0);}
+  }
+  @keyframes voice-pulse-fast{
+    0%{box-shadow:0 0 0 0 rgba(163,217,160,0.55);}
+    70%{box-shadow:0 0 0 14px rgba(163,217,160,0);}
+    100%{box-shadow:0 0 0 0 rgba(163,217,160,0);}
+  }
+  .voice-status{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12.5px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .voice-transcript{
+    width:100%;
+    max-height:280px;
+    overflow-y:auto;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding-top:8px;
+  }
+  .voice-transcript:empty{display:none;}
+  .voice-bubble{
+    max-width:80%;
+    padding:10px 14px;
+    border-radius:var(--radius-md);
+    font-size:14px;
+    line-height:1.5;
+  }
+  .voice-bubble-user{
+    align-self:flex-end;
+    background:var(--accent);
+    color:#08120e;
+    border-bottom-right-radius:4px;
+  }
+  .voice-bubble-agent{
+    align-self:flex-start;
+    background:var(--bg-panel-light);
+    color:var(--text-primary);
+    border:1px solid var(--border-subtle);
+    border-bottom-left-radius:4px;
+  }
+
   /* ---------- FINAL CTA ---------- */
   .final-cta{
     text-align:center;
@@ -478,6 +562,7 @@
     .btn{width:100%;justify-content:center;}
     .hero-actions{flex-direction:column;}
     .forecast-line{height:90px;}
+    .voice-card{padding:32px 20px;}
   }
 </style>
 </head>
@@ -525,6 +610,27 @@
     </div>
   </div>
 </header>
+
+<section class="voice-widget" id="talk">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow" style="justify-content:center;">Talk to us</p>
+      <h2>Ask Foresight anything, out loud.</h2>
+    </div>
+    <div class="voice-card">
+      <button id="voiceToggleBtn" class="voice-orb" type="button" aria-label="Start talking to the Foresight assistant">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+          <line x1="12" y1="19" x2="12" y2="23"></line>
+          <line x1="8" y1="23" x2="16" y2="23"></line>
+        </svg>
+      </button>
+      <p class="voice-status" id="voiceStatus">Tap to talk</p>
+      <div class="voice-transcript" id="voiceTranscript" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
 
 <section class="problem" id="problem">
   <div class="container">
@@ -657,10 +763,75 @@
   </div>
 </footer>
 
-<!-- ElevenLabs Conversational AI voice widget -->
-<!-- Replace YOUR_AGENT_ID_HERE with the Agent ID from your ElevenLabs dashboard (see setup steps) -->
-<elevenlabs-convai agent-id="agent_4601m02qg12reepvwy8j55151sq3"></elevenlabs-convai>
-<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+<!-- ElevenLabs Conversational AI — inline voice widget (JS client SDK, not the floating embed) -->
+<script type="module">
+  import { Conversation } from 'https://esm.sh/@elevenlabs/client';
+
+  const AGENT_ID = 'agent_4601m02qg12reepvwy8j55151sq3';
+  const btn = document.getElementById('voiceToggleBtn');
+  const statusEl = document.getElementById('voiceStatus');
+  const transcriptEl = document.getElementById('voiceTranscript');
+
+  let conversation = null;
+
+  function addBubble(role, text) {
+    if (!text) return;
+    const bubble = document.createElement('div');
+    bubble.className = 'voice-bubble voice-bubble-' + role;
+    bubble.textContent = text;
+    transcriptEl.appendChild(bubble);
+    transcriptEl.scrollTop = transcriptEl.scrollHeight;
+  }
+
+  async function startConversation() {
+    statusEl.textContent = 'Connecting…';
+    btn.disabled = true;
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      conversation = await Conversation.startSession({
+        agentId: AGENT_ID,
+        onConnect: () => {
+          btn.disabled = false;
+          btn.classList.add('voice-orb-active');
+          statusEl.textContent = 'Listening…';
+        },
+        onDisconnect: () => {
+          conversation = null;
+          btn.disabled = false;
+          btn.classList.remove('voice-orb-active', 'voice-orb-speaking');
+          statusEl.textContent = 'Tap to talk';
+        },
+        onModeChange: (modeInfo) => {
+          const speaking = modeInfo && modeInfo.mode === 'speaking';
+          btn.classList.toggle('voice-orb-speaking', speaking);
+          statusEl.textContent = speaking ? 'Speaking…' : 'Listening…';
+        },
+        onMessage: (msg) => {
+          if (!msg) return;
+          addBubble(msg.source === 'user' ? 'user' : 'agent', msg.message);
+        },
+        onError: () => {
+          statusEl.textContent = 'Something went wrong — tap to retry.';
+          btn.disabled = false;
+          btn.classList.remove('voice-orb-active', 'voice-orb-speaking');
+        },
+      });
+    } catch (err) {
+      statusEl.textContent = 'Mic access is needed to talk.';
+      btn.disabled = false;
+    }
+  }
+
+  btn.addEventListener('click', async () => {
+    if (conversation) {
+      statusEl.textContent = 'Ending…';
+      btn.disabled = true;
+      await conversation.endSession();
+      return;
+    }
+    startConversation();
+  });
+</script>
 
 </body>
 </html>
