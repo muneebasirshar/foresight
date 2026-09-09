@@ -553,6 +553,84 @@
   .voice-input-row button:hover{transform:translateY(-1px);}
   .voice-input-row button:disabled{opacity:.5;cursor:wait;}
 
+  /* ---------- CONTACT FORM ---------- */
+  .contact{
+    background:var(--bg-void);
+    border-top:1px solid var(--border-subtle);
+    border-bottom:1px solid var(--border-subtle);
+  }
+  .contact-card{
+    max-width:560px;
+    margin:0 auto;
+    background:var(--bg-panel);
+    border:1px solid var(--border-subtle);
+    border-radius:var(--radius-lg);
+    padding:8px;
+  }
+  .contact-card-head{
+    padding:22px 22px 16px;
+    border-bottom:1px solid var(--border-subtle);
+    text-align:center;
+  }
+  .contact-card-head h3{
+    font-size:20px;
+    font-weight:600;
+  }
+  .contact-card-head p{
+    color:var(--text-secondary);
+    font-size:13.5px;
+    margin-top:6px;
+  }
+  .contact-form{
+    padding:22px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .contact-form-row{
+    display:flex;
+    gap:14px;
+  }
+  .contact-form input,
+  .contact-form textarea{
+    width:100%;
+    background:var(--bg-void);
+    border:1px solid var(--border-subtle);
+    border-radius:var(--radius-sm);
+    padding:12px 14px;
+    color:var(--text-primary);
+    font-family:'Inter',sans-serif;
+    font-size:14.5px;
+  }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder{color:var(--text-muted);}
+  .contact-form input:focus,
+  .contact-form textarea:focus{outline:none;border-color:var(--accent);}
+  .contact-form textarea{resize:vertical;min-height:90px;font-family:'Inter',sans-serif;}
+  .contact-form button{width:100%;justify-content:center;}
+  .contact-form-status{
+    text-align:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.04em;
+    color:var(--text-muted);
+    min-height:16px;
+  }
+  .contact-form-status.success{color:var(--accent-mint);}
+  .contact-form-status.error{color:#e08a7d;}
+  .contact-email{
+    text-align:center;
+    margin-top:22px;
+    color:var(--text-secondary);
+    font-size:14.5px;
+  }
+  .contact-email a{
+    color:var(--accent);
+    font-weight:600;
+    border-bottom:1px solid rgba(75,184,173,0.35);
+  }
+  .contact-email a:hover{border-color:var(--accent);}
+
   /* ---------- FINAL CTA ---------- */
   .final-cta{
     text-align:center;
@@ -598,6 +676,7 @@
     .hero-actions{flex-direction:column;}
     .forecast-line{height:90px;}
     .voice-card{padding:32px 20px;}
+    .contact-form-row{flex-direction:column;}
   }
 </style>
 </head>
@@ -797,12 +876,83 @@
   </div>
 </section>
 
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow" style="justify-content:center;">Get in touch</p>
+      <h2>Not ready to book? Just drop your details.</h2>
+    </div>
+    <div class="contact-card">
+      <div class="contact-card-head">
+        <p class="eyebrow" style="justify-content:center;">Quick contact</p>
+        <h3>Leave your info, we'll reach out</h3>
+        <p>No commitment — just tell us how to reach you and we'll follow up.</p>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <input type="hidden" name="access_key" value="a40c4005-17b1-4bb3-a30a-9642271900d2" />
+        <input type="hidden" name="subject" value="New contact form submission — Foresight website" />
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off" />
+        <div class="contact-form-row">
+          <input type="text" name="name" placeholder="Full name" required />
+          <input type="email" name="email" placeholder="Email address" required />
+        </div>
+        <input type="tel" name="phone" placeholder="WhatsApp / phone number" />
+        <textarea name="message" placeholder="What's going on in your business? (optional)"></textarea>
+        <button type="submit" class="btn btn-primary" id="contactSubmitBtn">Send</button>
+        <p class="contact-form-status" id="contactFormStatus"></p>
+      </form>
+    </div>
+    <p class="contact-email">Prefer email? Reach us directly at <a href="mailto:support@foresight-partners.com">support@foresight-partners.com</a></p>
+  </div>
+</section>
+
 <footer>
   <div class="container footer-inner">
     <div class="logo" style="font-size:15px;"><span class="logo-mark"></span>Foresight</div>
-    <p>© 2026 Foresight. Remote / Global.</p>
+    <p><a href="mailto:support@foresight-partners.com">support@foresight-partners.com</a> · © 2026 Foresight. Remote / Global.</p>
   </div>
 </footer>
+
+<!-- Contact form — submits to Web3Forms (no backend needed) -->
+<script>
+  (function () {
+    var form = document.getElementById('contactForm');
+    var statusEl = document.getElementById('contactFormStatus');
+    var submitBtn = document.getElementById('contactSubmitBtn');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      statusEl.textContent = 'Sending…';
+      statusEl.className = 'contact-form-status';
+      submitBtn.disabled = true;
+
+      var payload = Object.fromEntries(new FormData(form));
+
+      fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify(payload),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          submitBtn.disabled = false;
+          if (data.success) {
+            statusEl.textContent = "Thanks — we'll be in touch soon.";
+            statusEl.className = 'contact-form-status success';
+            form.reset();
+          } else {
+            statusEl.textContent = 'Something went wrong — please try again or email us directly.';
+            statusEl.className = 'contact-form-status error';
+          }
+        })
+        .catch(function () {
+          submitBtn.disabled = false;
+          statusEl.textContent = 'Something went wrong — please try again or email us directly.';
+          statusEl.className = 'contact-form-status error';
+        });
+    });
+  })();
+</script>
 
 <!-- ElevenLabs Conversational AI — inline voice + text widget (JS client SDK, not the floating embed) -->
 <script type="module">
