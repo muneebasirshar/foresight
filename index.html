@@ -631,6 +631,79 @@
   }
   .contact-email a:hover{border-color:var(--accent);}
 
+  /* ---------- ONSET ---------- */
+  .onset{padding-top:0;}
+  .onset-card{
+    display:grid;
+    grid-template-columns:1.05fr 0.95fr;
+    gap:48px;
+    align-items:center;
+    background:var(--bg-panel);
+    border:1px solid var(--border-subtle);
+    border-radius:var(--radius-lg);
+    padding:44px;
+  }
+  .onset-copy h2{
+    font-size:clamp(26px,3.2vw,36px);
+    font-weight:600;
+    line-height:1.2;
+    margin:16px 0 14px;
+  }
+  .onset-sub{
+    color:var(--text-secondary);
+    font-size:16px;
+    line-height:1.6;
+    margin-bottom:22px;
+  }
+  .onset-points{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-bottom:28px;
+  }
+  .onset-points li{
+    display:flex;
+    gap:12px;
+    color:var(--text-secondary);
+    font-size:14.5px;
+    line-height:1.5;
+  }
+  .onset-points li::before{
+    content:'';
+    flex-shrink:0;
+    width:6px;height:6px;
+    margin-top:8px;
+    background:var(--accent);
+    border-radius:1px;
+    box-shadow:0 0 8px var(--accent-bright);
+  }
+  .onset-actions{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+  }
+  .onset-visual{
+    display:block;
+    border-radius:var(--radius-md);
+    overflow:hidden;
+    border:1px solid var(--border-subtle);
+  }
+  .onset-visual img{
+    display:block;
+    width:100%;
+    height:auto;
+    transition:transform .4s ease;
+  }
+  .onset-visual:hover img{transform:scale(1.03);}
+  @media (max-width:860px){
+    .onset-card{grid-template-columns:1fr;gap:32px;padding:28px 22px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .onset-visual img{transition:none;}
+    .onset-visual:hover img{transform:none;}
+  }
+
   /* ---------- FINAL CTA ---------- */
   .final-cta{
     text-align:center;
@@ -864,6 +937,30 @@
         </script>
         <!-- Calendly inline widget end -->
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="onset" id="onset">
+  <div class="container">
+    <div class="onset-card">
+      <div class="onset-copy">
+        <p class="eyebrow">Onset</p>
+        <h2>A 5-minute daily check-in for cognitive readiness.</h2>
+        <p class="onset-sub">Onset gives employees, managers, and HR an objective, repeatable signal of cognitive readiness — before low-readiness moments become costly mistakes.</p>
+        <ul class="onset-points">
+          <li>Reaction time, focus, and decision speed in under 5 minutes a day — no wearable required</li>
+          <li>Managers see flags, never scores — enforced at the database layer</li>
+          <li>Built for logistics, manufacturing, healthcare, and utilities teams</li>
+        </ul>
+        <div class="onset-actions">
+          <a href="/onset/" class="btn btn-primary">Explore Onset →</a>
+          <a href="mailto:support@foresight-partners.com?subject=Onset%20pilot%20request" class="btn btn-secondary">Request a pilot</a>
+        </div>
+      </div>
+      <a class="onset-visual" href="/onset/" aria-label="Open the Onset website">
+        <img src="/onset/media/hero-frames/frame-060.jpg" alt="A calm, softly lit desk with the Onset daily check-in card on a laptop screen" width="1280" height="724" loading="lazy">
+      </a>
     </div>
   </div>
 </section>
