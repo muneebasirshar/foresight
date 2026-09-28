@@ -704,6 +704,30 @@
     .onset-visual:hover img{transform:none;}
   }
 
+  /* ---------- ALPHA ANALYTICS ---------- */
+  .alpha{padding-top:0;}
+  .alpha-visual{
+    display:flex;
+    flex-wrap:wrap;
+    align-content:center;
+    gap:10px;
+    padding:8px;
+  }
+  .alpha-chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.06em;
+    color:var(--accent-teal);
+    background:var(--bg-panel-light);
+    border:1px solid rgba(75,184,173,0.3);
+    padding:9px 14px;
+    border-radius:999px;
+    white-space:nowrap;
+  }
+  @media (max-width:860px){
+    .alpha-visual{padding:0;}
+  }
+
   /* ---------- FINAL CTA ---------- */
   .final-cta{
     text-align:center;
@@ -961,6 +985,35 @@
       <a class="onset-visual" href="/onset/" aria-label="Open the Onset website">
         <img src="/onset/media/hero-frames/frame-060.jpg" alt="A calm, softly lit desk with the Onset daily check-in card on a laptop screen" width="1280" height="724" loading="lazy">
       </a>
+    </div>
+  </div>
+</section>
+
+<section class="alpha" id="alpha-analytics">
+  <div class="container">
+    <div class="onset-card">
+      <div class="onset-copy">
+        <p class="eyebrow">Alpha Analytics</p>
+        <h2>Power BI dashboards, Microsoft 365 automation, and Copilot adoption.</h2>
+        <p class="onset-sub">Alpha Analytics turns messy data into clear Power BI dashboards and connects them to smarter Microsoft 365 workflows — so your team spends less time in spreadsheets and more time making decisions.</p>
+        <ul class="onset-points">
+          <li>Power BI dashboards your team will actually open — built around your business, not a template</li>
+          <li>Microsoft 365 &amp; Copilot adoption across Teams, Outlook, and Excel</li>
+          <li>Power Automate workflows and Power Apps that replace manual spreadsheets</li>
+        </ul>
+        <div class="onset-actions">
+          <a href="https://buildalphaanalytics.com/" target="_blank" rel="noopener" class="btn btn-primary">Visit Alpha Analytics →</a>
+          <a href="mailto:work@buildalphaanalytics.com" class="btn btn-secondary">Get in touch</a>
+        </div>
+      </div>
+      <div class="alpha-visual" aria-hidden="true">
+        <span class="alpha-chip">Power BI</span>
+        <span class="alpha-chip">Data Modeling</span>
+        <span class="alpha-chip">M365 &amp; Copilot</span>
+        <span class="alpha-chip">Power Automate</span>
+        <span class="alpha-chip">Power Apps</span>
+        <span class="alpha-chip">Forecasting</span>
+      </div>
     </div>
   </div>
 </section>
